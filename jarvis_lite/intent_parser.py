@@ -133,7 +133,7 @@ def _prepare_text(text: str) -> str:
     prepared = text.strip()
     prepared = re.sub(r"[?!.,]", "", prepared)
     prepared = re.sub(
-        r"\b(jarvis lite|jarvis|please|kindly|for me)\b",
+        r"\b(jarvis|please|kindly|for me)\b",
         "",
         prepared,
         flags=re.IGNORECASE,

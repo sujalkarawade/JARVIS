@@ -1,1 +1,1 @@
-"""Jarvis Lite package."""
+"""Jarvis package."""

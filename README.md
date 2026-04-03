@@ -1,6 +1,6 @@
-# Jarvis Lite
+# Jarvis
 
-Jarvis Lite is a beginner-friendly AI personal assistant built with Python for Windows. It supports both voice and text commands, can open apps and websites, remembers simple user facts, and performs practical desktop actions.
+Jarvis is a beginner-friendly AI personal assistant built with Python for Windows. It supports both voice and text commands, can open apps and websites, remembers simple user facts, and performs practical desktop actions.
 
 ## Features
 
@@ -21,7 +21,7 @@ Jarvis Lite is a beginner-friendly AI personal assistant built with Python for W
 JARVIS/
 |-- data/
 |   `-- memory.json
-|-- jarvis_lite/
+|-- jarvis/
 |   |-- __init__.py
 |   |-- assistant.py
 |   |-- intent_parser.py
@@ -82,7 +82,7 @@ python main.py
 - Voice recognition uses Google's recognizer through the `SpeechRecognition` package.
 - You need a working microphone.
 - You also need an internet connection for speech-to-text.
-- If voice is unavailable, Jarvis Lite still works in text mode.
+- If voice is unavailable, Jarvis still works in text mode.
 - If you installed a newer `SpeechRecognition` version manually and voice stops working, run `pip install -r requirements.txt` to restore the tested version.
 - On Python 3.12, `setuptools` is also required because `SpeechRecognition 3.8.1` still expects the old `distutils` module during microphone setup.
 
@@ -105,7 +105,7 @@ python main.py
 
 ## How App Opening Works
 
-Jarvis Lite tries the following in order:
+Jarvis tries the following in order:
 
 1. Known app shortcuts such as VS Code, Chrome, Edge, Notepad, and PowerShell.
 2. Executables available in your system `PATH`.

@@ -138,11 +138,10 @@ class JarvisAssistant:
 
         if intent.intent == "exit":
             self.running = False
-            return "Goodbye. Jarvis Lite is shutting down."
+            return "Goodbye. Jarvis is shutting down."
 
         return (
             "I am not sure how to help with that yet. "
-            "Try commands like 'Open Chrome', 'Search AI projects', or 'My name is Sujal'."
         )
 
     def _conversation_reply(self, intent: CommandIntent) -> str:
@@ -150,7 +149,7 @@ class JarvisAssistant:
 
         if intent.target == "greeting":
             if stored_name:
-                return f"Hello, {stored_name}. How can I help you today?"
+                return f"Hello Jarvis, {stored_name}. How can I help you today?"
             return "Hello. How can I help you today?"
 
         if intent.target == "thanks":
@@ -160,7 +159,7 @@ class JarvisAssistant:
             return "I am doing well and ready to help."
 
         if intent.target == "identity":
-            return "I am Jarvis Lite, your Python-based personal assistant."
+            return "I am Jarvis, your Python-based personal assistant."
 
         return "I am here and ready to help."
 
