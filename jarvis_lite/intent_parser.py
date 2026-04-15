@@ -6,10 +6,15 @@ from dataclasses import dataclass
 
 KNOWN_WEBSITE_NAMES = {
     "chatgpt",
+    "chess",
+    "chess.com",
+    "classroom",
     "facebook",
     "github",
     "gmail",
     "google",
+    "google classroom",
+    "google drive",
     "instagram",
     "linkedin",
     "netflix",
@@ -101,13 +106,7 @@ def parse_command(text: str) -> CommandIntent:
         if _looks_like_path(target):
             return CommandIntent(intent="open_path", target=target, raw_text=raw_text)
 
-        if _looks_like_website(target):
-            return CommandIntent(
-                intent="open_website",
-                target=target,
-                raw_text=raw_text,
-            )
-
+        # Always try open_app first; system_control will fall back to browser if needed
         return CommandIntent(intent="open_app", target=target, raw_text=raw_text)
 
     conversation_map = {

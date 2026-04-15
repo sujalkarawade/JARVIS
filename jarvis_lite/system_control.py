@@ -14,10 +14,15 @@ class SystemController:
 
     KNOWN_WEBSITES = {
         "chatgpt": "https://chat.openai.com/",
+        "chess": "https://www.chess.com/",
+        "chess.com": "https://www.chess.com/",
+        "classroom": "https://classroom.google.com/",
         "facebook": "https://www.facebook.com/",
         "github": "https://github.com/",
         "gmail": "https://mail.google.com/",
         "google": "https://www.google.com/",
+        "google classroom": "https://classroom.google.com/",
+        "google drive": "https://drive.google.com/",
         "instagram": "https://www.instagram.com/",
         "linkedin": "https://www.linkedin.com/",
         "netflix": "https://www.netflix.com/",
@@ -105,6 +110,16 @@ class SystemController:
     def open_application(self, app_name: str) -> tuple[bool, str]:
         normalized = self._normalize(app_name)
 
+        # Step 1: check known websites
+        url = self._resolve_website(app_name)
+        if url:
+            try:
+                webbrowser.open(url)
+                return True, f"Opening {app_name}."
+            except OSError as exc:
+                return False, f"I could not open that: {exc}"
+
+        # Step 2: try installed app commands and Start Menu
         for candidate in self._candidate_commands(app_name):
             if self._launch_command(candidate):
                 return True, f"Opening {app_name}."
@@ -117,10 +132,13 @@ class SystemController:
             except OSError as exc:
                 return False, f"I found {app_name}, but could not open it: {exc}"
 
-        return (
-            False,
-            f"I could not find an installed application called '{app_name}'.",
-        )
+        # Step 3: fall back to https://www.<name>.com
+        guessed_url = self._guess_url(app_name)
+        try:
+            webbrowser.open(guessed_url)
+            return True, f"Could not find '{app_name}' locally, opening {guessed_url} instead."
+        except OSError as exc:
+            return False, f"I could not open anything for '{app_name}': {exc}"
 
     def close_application(self, app_name: str) -> tuple[bool, str]:
         normalized = self._normalize(app_name)
@@ -193,6 +211,13 @@ class SystemController:
 
         return None
 
+    def _guess_url(self, app_name: str) -> str:
+        """Build a best-guess .com URL from an app/site name."""
+        slug = self._normalize(app_name).replace(" ", "")
+        # strip any existing .com/.org etc. so we don't double-up
+        slug = re.sub(r"\.(com|org|net|io|ai|in|dev)$", "", slug)
+        return f"https://www.{slug}.com"
+
     def _resolve_path(self, target: str) -> Path | None:
         cleaned = re.sub(r"\b(folder|file)\b", "", target, flags=re.IGNORECASE).strip()
         normalized = self._normalize(cleaned)
@@ -242,11 +267,7 @@ class SystemController:
             subprocess.Popen([executable_path])
             return True
 
-        try:
-            subprocess.Popen([expanded])
-            return True
-        except (FileNotFoundError, OSError):
-            return False
+        return False
 
     def _find_start_menu_match(self, app_name: str) -> Path | None:
         start_menu_roots = [
