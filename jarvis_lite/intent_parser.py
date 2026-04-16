@@ -5,23 +5,29 @@ from dataclasses import dataclass
 
 
 KNOWN_WEBSITE_NAMES = {
-    "chatgpt",
-    "chess",
-    "chess.com",
-    "classroom",
-    "facebook",
-    "github",
-    "gmail",
-    "google",
-    "google classroom",
-    "google drive",
-    "instagram",
-    "linkedin",
-    "netflix",
-    "reddit",
-    "stackoverflow",
-    "wikipedia",
-    "youtube",
+    # AI
+    "chatgpt", "openai", "gemini", "claude",
+    # Cloud
+    "aws", "aws console", "amazon web services", "amazon web services console",
+    "gcp", "google cloud", "google cloud console",
+    "azure", "azure portal",
+    # Social / Entertainment
+    "chess", "chess.com", "facebook", "instagram", "twitter", "x",
+    "reddit", "netflix", "youtube", "spotify", "twitch",
+    # Dev
+    "github", "gitlab", "stackoverflow", "stack overflow",
+    "vercel", "netlify", "heroku", "docker hub", "dockerhub", "npm", "pypi",
+    # Google suite
+    "google", "gmail", "google drive", "google docs", "google sheets",
+    "google slides", "google classroom", "classroom",
+    "google meet", "meet", "google maps", "maps", "google calendar", "calendar",
+    # Shopping
+    "amazon", "flipkart", "ebay",
+    # Knowledge
+    "wikipedia", "linkedin",
+    # Productivity
+    "notion", "trello", "jira", "slack", "discord",
+    "whatsapp", "zoom", "figma", "canva",
 }
 
 SPECIAL_FOLDER_WORDS = {

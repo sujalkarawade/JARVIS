@@ -13,23 +13,77 @@ class SystemController:
     """Windows-focused helpers for opening and closing apps, files, and websites."""
 
     KNOWN_WEBSITES = {
+        # AI / Productivity
         "chatgpt": "https://chat.openai.com/",
+        "openai": "https://chat.openai.com/",
+        "gemini": "https://gemini.google.com/",
+        "claude": "https://claude.ai/",
+        # Cloud
+        "aws": "https://aws.amazon.com/",
+        "aws console": "https://console.aws.amazon.com/",
+        "amazon web services": "https://aws.amazon.com/",
+        "amazon web services console": "https://console.aws.amazon.com/",
+        "gcp": "https://console.cloud.google.com/",
+        "google cloud": "https://console.cloud.google.com/",
+        "google cloud console": "https://console.cloud.google.com/",
+        "azure": "https://portal.azure.com/",
+        "azure portal": "https://portal.azure.com/",
+        # Social / Entertainment
         "chess": "https://www.chess.com/",
         "chess.com": "https://www.chess.com/",
-        "classroom": "https://classroom.google.com/",
         "facebook": "https://www.facebook.com/",
-        "github": "https://github.com/",
-        "gmail": "https://mail.google.com/",
-        "google": "https://www.google.com/",
-        "google classroom": "https://classroom.google.com/",
-        "google drive": "https://drive.google.com/",
         "instagram": "https://www.instagram.com/",
-        "linkedin": "https://www.linkedin.com/",
-        "netflix": "https://www.netflix.com/",
+        "twitter": "https://twitter.com/",
+        "x": "https://x.com/",
         "reddit": "https://www.reddit.com/",
-        "stackoverflow": "https://stackoverflow.com/",
-        "wikipedia": "https://www.wikipedia.org/",
+        "netflix": "https://www.netflix.com/",
         "youtube": "https://www.youtube.com/",
+        "spotify": "https://open.spotify.com/",
+        "twitch": "https://www.twitch.tv/",
+        # Dev
+        "github": "https://github.com/",
+        "gitlab": "https://gitlab.com/",
+        "stackoverflow": "https://stackoverflow.com/",
+        "stack overflow": "https://stackoverflow.com/",
+        "vercel": "https://vercel.com/",
+        "netlify": "https://netlify.com/",
+        "heroku": "https://dashboard.heroku.com/",
+        "docker hub": "https://hub.docker.com/",
+        "dockerhub": "https://hub.docker.com/",
+        "npm": "https://www.npmjs.com/",
+        "pypi": "https://pypi.org/",
+        # Google
+        "google": "https://www.google.com/",
+        "gmail": "https://mail.google.com/",
+        "google drive": "https://drive.google.com/",
+        "google docs": "https://docs.google.com/",
+        "google sheets": "https://sheets.google.com/",
+        "google slides": "https://slides.google.com/",
+        "google classroom": "https://classroom.google.com/",
+        "classroom": "https://classroom.google.com/",
+        "google meet": "https://meet.google.com/",
+        "meet": "https://meet.google.com/",
+        "google maps": "https://maps.google.com/",
+        "maps": "https://maps.google.com/",
+        "google calendar": "https://calendar.google.com/",
+        "calendar": "https://calendar.google.com/",
+        # Shopping
+        "amazon": "https://www.amazon.com/",
+        "flipkart": "https://www.flipkart.com/",
+        "ebay": "https://www.ebay.com/",
+        # Knowledge
+        "wikipedia": "https://www.wikipedia.org/",
+        "linkedin": "https://www.linkedin.com/",
+        # Productivity
+        "notion": "https://www.notion.so/",
+        "trello": "https://trello.com/",
+        "jira": "https://www.atlassian.com/software/jira",
+        "slack": "https://slack.com/",
+        "discord": "https://discord.com/",
+        "whatsapp": "https://web.whatsapp.com/",
+        "zoom": "https://zoom.us/",
+        "figma": "https://www.figma.com/",
+        "canva": "https://www.canva.com/",
     }
 
     APP_COMMANDS = {
@@ -128,7 +182,7 @@ class SystemController:
         if shortcut is not None:
             try:
                 os.startfile(str(shortcut))
-                return True, f"Opening {app_name} from the Start Menu."
+                return True, f"Opening {app_name}."
             except OSError as exc:
                 return False, f"I found {app_name}, but could not open it: {exc}"
 
@@ -136,7 +190,7 @@ class SystemController:
         guessed_url = self._guess_url(app_name)
         try:
             webbrowser.open(guessed_url)
-            return True, f"Could not find '{app_name}' locally, opening {guessed_url} instead."
+            return True, f"Opening {app_name}."
         except OSError as exc:
             return False, f"I could not open anything for '{app_name}': {exc}"
 
@@ -211,10 +265,31 @@ class SystemController:
 
         return None
 
+    # Noise words that are stripped before guessing a .com URL
+    _URL_NOISE_WORDS = {
+        "console", "portal", "dashboard", "panel", "app", "application",
+        "website", "site", "page", "online", "web", "the",
+    }
+
     def _guess_url(self, app_name: str) -> str:
-        """Build a best-guess .com URL from an app/site name."""
-        slug = self._normalize(app_name).replace(" ", "")
-        # strip any existing .com/.org etc. so we don't double-up
+        """Build a best-guess .com URL from an app/site name.
+
+        Strategy:
+        1. Strip known noise words (console, portal, dashboard …).
+        2. Collapse the remaining words into a single slug.
+        3. Remove any trailing TLD so we never double-up.
+        4. Return https://www.<slug>.com
+
+        Examples:
+            'aws console'  -> 'awsconsole' -> https://www.awsconsole.com
+            'chess'        -> 'chess'      -> https://www.chess.com
+            'google drive' -> 'googledrive'-> https://www.googledrive.com
+        """
+        words = self._normalize(app_name).split()
+        # Remove noise words but always keep at least one word
+        meaningful = [w for w in words if w not in self._URL_NOISE_WORDS] or words
+        slug = "".join(meaningful)
+        # Strip any trailing TLD to avoid duplication
         slug = re.sub(r"\.(com|org|net|io|ai|in|dev)$", "", slug)
         return f"https://www.{slug}.com"
 
