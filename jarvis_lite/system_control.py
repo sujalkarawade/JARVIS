@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 import os
 import re
 import shutil
@@ -193,6 +194,56 @@ class SystemController:
             return True, f"Opening {app_name}."
         except OSError as exc:
             return False, f"I could not open anything for '{app_name}': {exc}"
+
+    # ------------------------------------------------------------------
+    # Screenshot / Lock / Shutdown
+    # ------------------------------------------------------------------
+
+    def take_screenshot(self) -> tuple[bool, str]:
+        """Capture the full screen and save it to the Desktop."""
+        try:
+            from PIL import ImageGrab  # type: ignore[import]
+        except ImportError:
+            return False, "Pillow is not installed. Run: pip install Pillow"
+
+        try:
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            save_path = Path.home() / "Desktop" / f"screenshot_{timestamp}.png"
+            img = ImageGrab.grab()
+            img.save(str(save_path))
+            return True, f"Screenshot saved to Desktop as screenshot_{timestamp}.png."
+        except Exception as exc:  # noqa: BLE001
+            return False, f"Could not take screenshot: {exc}"
+
+    def lock_screen(self) -> tuple[bool, str]:
+        """Lock the Windows workstation immediately."""
+        try:
+            subprocess.run(
+                ["rundll32.exe", "user32.dll,LockWorkStation"],
+                check=True,
+            )
+            return True, "Locking the screen."
+        except Exception as exc:  # noqa: BLE001
+            return False, f"Could not lock the screen: {exc}"
+
+    def shutdown_pc(self, delay_seconds: int = 10) -> tuple[bool, str]:
+        """Initiate a Windows shutdown with a grace period."""
+        try:
+            subprocess.run(
+                ["shutdown", "/s", "/t", str(delay_seconds)],
+                check=True,
+            )
+            return True, f"Shutting down in {delay_seconds} seconds. Say 'cancel shutdown' to abort."
+        except Exception as exc:  # noqa: BLE001
+            return False, f"Could not initiate shutdown: {exc}"
+
+    def cancel_shutdown(self) -> tuple[bool, str]:
+        """Abort a pending Windows shutdown."""
+        try:
+            subprocess.run(["shutdown", "/a"], check=True)
+            return True, "Shutdown cancelled."
+        except Exception as exc:  # noqa: BLE001
+            return False, f"Could not cancel shutdown: {exc}"
 
     def close_application(self, app_name: str) -> tuple[bool, str]:
         normalized = self._normalize(app_name)

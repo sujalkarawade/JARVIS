@@ -133,6 +133,22 @@ class JarvisAssistant:
             _, message = self.system.close_application(intent.target)
             return message
 
+        if intent.intent == "screenshot":
+            _, message = self.system.take_screenshot()
+            return message
+
+        if intent.intent == "lock_screen":
+            _, message = self.system.lock_screen()
+            return message
+
+        if intent.intent == "shutdown":
+            _, message = self.system.shutdown_pc()
+            return message
+
+        if intent.intent == "cancel_shutdown":
+            _, message = self.system.cancel_shutdown()
+            return message
+
         if intent.intent == "conversation":
             return self._conversation_reply(intent)
 
@@ -175,10 +191,15 @@ class JarvisAssistant:
             "- Open VS Code\n"
             "- Can you open Chrome?\n"
             "- Open YouTube\n"
+            "- Open AWS Console\n"
             "- Search AI projects\n"
             "- Open downloads folder\n"
             "- Open C:\\Users\\YourName\\Documents\n"
             "- Close Chrome\n"
+            "- Take a screenshot\n"
+            "- Lock the screen\n"
+            "- Shut down\n"
+            "- Cancel shutdown\n"
             "- My name is Sujal\n"
             "- What is my name?\n"
             "- Forget my name\n"

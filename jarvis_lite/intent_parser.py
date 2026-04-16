@@ -92,6 +92,31 @@ def parse_command(text: str) -> CommandIntent:
         target = _clean_target(close_match.group(1))
         return CommandIntent(intent="close_app", target=target, raw_text=raw_text)
 
+    # --- Screenshot ---
+    if re.match(
+        r"^(?:take\s+(?:a\s+)?screenshot|capture\s+(?:the\s+)?screen|screenshot)$",
+        simplified,
+    ):
+        return CommandIntent(intent="screenshot", raw_text=raw_text)
+
+    # --- Lock screen ---
+    if re.match(
+        r"^(?:lock(?:\s+(?:the\s+)?(?:screen|computer|pc|system))?|lock\s+screen)$",
+        simplified,
+    ):
+        return CommandIntent(intent="lock_screen", raw_text=raw_text)
+
+    # --- Cancel shutdown ---
+    if re.match(r"^(?:cancel|abort)\s+shutdown$", simplified):
+        return CommandIntent(intent="cancel_shutdown", raw_text=raw_text)
+
+    # --- Shutdown ---
+    if re.match(
+        r"^(?:shutdown|shut\s+down|power\s+off|turn\s+off)(?:\s+(?:the\s+)?(?:computer|pc|system|laptop))?$",
+        simplified,
+    ):
+        return CommandIntent(intent="shutdown", raw_text=raw_text)
+
     search_patterns = [
         r"^(?:search(?: for)?|google|look up|find)\s+(.+)$",
         r"^(?:search google for|open google and search for)\s+(.+)$",
