@@ -34,7 +34,7 @@ class JarvisAssistant:
 
     def _print_welcome(self) -> None:
         print("=" * 60)
-        print("Jarvis Lite - AI Personal Assistant")
+        print("Jarvis - AI Personal Assistant")
         print("=" * 60)
         print("Type 'help' to see example commands.")
 
