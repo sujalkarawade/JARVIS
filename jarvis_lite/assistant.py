@@ -7,7 +7,6 @@ from jarvis_lite.memory import MemoryStore
 from jarvis_lite.system_control import SystemController
 from jarvis_lite.voice import VoiceAssistant
 
-
 class JarvisAssistant:
     """Main assistant that coordinates parsing, memory, voice, and system actions."""
 
